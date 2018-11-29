@@ -6,14 +6,36 @@
     <transfer name="RestConditionalAvailabilityRequest">
         <property name="sku" type="string" />
         <property name="date" type="string" />
+        <property name="warehouse" type="string" />
     </transfer>
 
-    <transfer name="RestConditionalAvailabilityResponse">
+    <transfer name="RestConditionalAvailabilityPeriodResponse">
+        <property name="periods" type="RestConditionalAvailabilityPeriodItem[]"/>
+        <property name="sort" type="RestCatalogSearchSortAttributes"/>
+        <property name="pagination" type="RestCatalogSearchPaginationAttributes"/>
+    </transfer>
+
+    <transfer name="RestConditionalAvailabilityPeriodItem">
         <property name="qty" type="int" />
         <property name="sku" type="string" />
         <property name="startAt" type="string" />
         <property name="endAt" type="string" />
         <property name="warehouseGroup" type="string" />
     </transfer>
+
+    <transfer name="RestConditionalAvailabilitySortAttributes">
+        <property name="sortParamNames" type="array"/>
+        <property name="sortParamLocalizedNames" type="array"/>
+        <property name="currentSortParam" type="string"/>
+        <property name="currentSortOrder" type="string"/>
+    </transfer>
+
+    <transfer name="RestConditionalAvailabilityPaginationAttributes">
+        <property name="numFound" type="int" />
+        <property name="currentPage" type="int" />
+        <property name="maxPage" type="int" />
+        <property name="currentItemsPerPage" type="int" />
+    </transfer>
+
 
 </transfers>

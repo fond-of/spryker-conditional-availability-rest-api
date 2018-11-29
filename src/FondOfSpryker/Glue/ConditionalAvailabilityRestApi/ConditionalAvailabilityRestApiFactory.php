@@ -3,24 +3,23 @@
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi;
 
 use FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientInterface;
-use FondOfSpryker\Glue\CustomersRestApi\Processor\Customers\ConditionalAvailabilityWriter;
-use Spryker\Glue\CustomersRestApi\Processor\Customers\CustomersWriter;
-use Spryker\Glue\CustomersRestApi\Processor\Customers\CustomersWriterInterface;
-use Spryker\Glue\CustomersRestApi\Processor\Mapper\CustomersResourceMapper;
-use Spryker\Glue\CustomersRestApi\Processor\Mapper\CustomersResourceMapperInterface;
+use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\ConditionalAvailability\ConditionalAvailabilityReader;
+use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\ConditionalAvailability\ConditionalAvailabilityReaderInterface;
+use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapper;
+use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapperInterface;
 use Spryker\Glue\Kernel\AbstractFactory;
 
 class ConditionalAvailabilityRestApiFactory extends AbstractFactory
 {
     /**
-     * @return \Spryker\Glue\CustomersRestApi\Processor\Customers\CustomersWriterInterface
+     * @return \FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\ConditionalAvailability\ConditionalAvailabilityReaderInterface
      */
-    public function createCustomersWriter(): CustomersWriterInterface
+    public function createConditionalAvailabilityWriter(): ConditionalAvailabilityReaderInterface
     {
-        return new ConditionalAvailabilityWriter(
-            $this->getCustomerClient(),
-            $this->getResourceBuilder(),
-            $this->createCustomersResourceMapper()
+        return new ConditionalAvailabilityReader(
+            $this->getConditionalAvailability(),
+            $this->createConditionalAvailabilityResourceMapper(),
+            $this->getResourceBuilder()
         );
     }
 
@@ -33,12 +32,10 @@ class ConditionalAvailabilityRestApiFactory extends AbstractFactory
     }
 
     /**
-     * @return \Spryker\Glue\CustomersRestApi\Processor\Mapper\CustomersResourceMapperInterface
+     * @return \FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapperInterface
      */
-    public function createCustomersResourceMapper(): CustomersResourceMapperInterface
+    public function createConditionalAvailabilityResourceMapper(): ConditionalAvailabilityResourceMapperInterface
     {
-        return new CustomersResourceMapper(
-            $this->getResourceBuilder()
-        );
+        return new ConditionalAvailabilityResourceMapper();
     }
 }
