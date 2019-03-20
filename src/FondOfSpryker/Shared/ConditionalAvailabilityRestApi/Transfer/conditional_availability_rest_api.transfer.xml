@@ -11,8 +11,7 @@
 
     <transfer name="RestConditionalAvailabilityPeriodResponse">
         <property name="periods" type="RestConditionalAvailabilityPeriodItem[]"/>
-        <property name="sort" type="RestCatalogSearchSortAttributes"/>
-        <property name="pagination" type="RestCatalogSearchPaginationAttributes"/>
+        <property name="total" type="int"/>
     </transfer>
 
     <transfer name="RestConditionalAvailabilityPeriodItem">

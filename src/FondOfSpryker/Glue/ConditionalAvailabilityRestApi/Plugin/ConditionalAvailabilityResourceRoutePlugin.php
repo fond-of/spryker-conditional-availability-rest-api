@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Plugin;
 
 use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\ConditionalAvailabilityRestApiConfig;
 use Generated\Shared\Transfer\RestConditionalAvailabilityRequestTransfer;
-use Generated\Shared\Transfer\RestCustomersAttributesTransfer;
-use Spryker\Glue\CustomersRestApi\CustomersRestApiConfig;
 use Spryker\Glue\GlueApplicationExtension\Dependency\Plugin\ResourceRouteCollectionInterface;
 use Spryker\Glue\GlueApplicationExtension\Dependency\Plugin\ResourceRoutePluginInterface;
 use Spryker\Glue\Kernel\AbstractPlugin;
@@ -16,8 +16,6 @@ use Spryker\Glue\Kernel\AbstractPlugin;
 class ConditionalAvailabilityResourceRoutePlugin extends AbstractPlugin implements ResourceRoutePluginInterface
 {
     /**
-     * @api
-     *
      * @param \Spryker\Glue\GlueApplicationExtension\Dependency\Plugin\ResourceRouteCollectionInterface $resourceRouteCollection
      *
      * @return \Spryker\Glue\GlueApplicationExtension\Dependency\Plugin\ResourceRouteCollectionInterface
@@ -31,8 +29,6 @@ class ConditionalAvailabilityResourceRoutePlugin extends AbstractPlugin implemen
     }
 
     /**
-     * @api
-     *
      * @return string
      */
     public function getResourceType(): string
@@ -41,8 +37,6 @@ class ConditionalAvailabilityResourceRoutePlugin extends AbstractPlugin implemen
     }
 
     /**
-     * @api
-     *
      * @return string
      */
     public function getController(): string
@@ -51,8 +45,6 @@ class ConditionalAvailabilityResourceRoutePlugin extends AbstractPlugin implemen
     }
 
     /**
-     * @api
-     *
      * @return string
      */
     public function getResourceAttributesClassName(): string

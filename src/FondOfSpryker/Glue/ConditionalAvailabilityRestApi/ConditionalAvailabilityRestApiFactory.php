@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi;
 
 use FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientInterface;
@@ -12,12 +14,20 @@ use Spryker\Glue\Kernel\AbstractFactory;
 class ConditionalAvailabilityRestApiFactory extends AbstractFactory
 {
     /**
+     * @return \FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapperInterface
+     */
+    public function createConditionalAvailabilityResourceMapper(): ConditionalAvailabilityResourceMapperInterface
+    {
+        return new ConditionalAvailabilityResourceMapper();
+    }
+
+    /**
      * @return \FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\ConditionalAvailability\ConditionalAvailabilityReaderInterface
      */
-    public function createConditionalAvailabilityWriter(): ConditionalAvailabilityReaderInterface
+    public function createConditionalAvailabilityReader(): ConditionalAvailabilityReaderInterface
     {
         return new ConditionalAvailabilityReader(
-            $this->getConditionalAvailability(),
+            $this->getConditionalAvailabilityClient(),
             $this->createConditionalAvailabilityResourceMapper(),
             $this->getResourceBuilder()
         );
@@ -26,16 +36,8 @@ class ConditionalAvailabilityRestApiFactory extends AbstractFactory
     /**
      * @return \FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientInterface
      */
-    public function getConditionalAvailability(): ConditionalAvailabilityClientInterface
+    public function getConditionalAvailabilityClient(): ConditionalAvailabilityClientInterface
     {
         return $this->getProvidedDependency(ConditionalAvailabilityRestApiDependencyProvider::CLIENT_CONDITIONAL_AVAILABILITY);
-    }
-
-    /**
-     * @return \FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapperInterface
-     */
-    public function createConditionalAvailabilityResourceMapper(): ConditionalAvailabilityResourceMapperInterface
-    {
-        return new ConditionalAvailabilityResourceMapper();
     }
 }

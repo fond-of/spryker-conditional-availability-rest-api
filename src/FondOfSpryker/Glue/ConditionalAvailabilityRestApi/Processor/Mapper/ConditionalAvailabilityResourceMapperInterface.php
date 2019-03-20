@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper;
 
 use Elastica\ResultSet;

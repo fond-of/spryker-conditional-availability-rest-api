@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi;
 
-use Spryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientBridge;
-use Spryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToSessionClientBridge;
 use Spryker\Glue\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Glue\Kernel\Container;
 
@@ -18,6 +18,8 @@ class ConditionalAvailabilityRestApiDependencyProvider extends AbstractBundleDep
      */
     public function provideDependencies(Container $container): Container
     {
+        $container = parent::provideDependencies($container);
+
         $container = $this->addConditionalAvailabilityClient($container);
 
         return $container;

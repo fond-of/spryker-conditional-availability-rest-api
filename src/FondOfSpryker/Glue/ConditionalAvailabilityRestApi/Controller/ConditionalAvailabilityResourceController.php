@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Controller;
 
 use Generated\Shared\Transfer\RestConditionalAvailabilityRequestTransfer;
@@ -24,7 +26,7 @@ class ConditionalAvailabilityResourceController extends AbstractController
     ): RestResponseInterface {
 
         return $this->getFactory()
-            ->createConditionalAvailabilityWriter()
+            ->createConditionalAvailabilityReader()
             ->searchRequest($restRequest, $restConditionalAvailabilityRequestTransfer);
     }
 }

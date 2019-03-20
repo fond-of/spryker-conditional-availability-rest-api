@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper;
 
 use Elastica\ResultSet;
@@ -24,17 +26,11 @@ class ConditionalAvailabilityResourceMapper implements ConditionalAvailabilityRe
 
         if ($resultSet->count() > 0) {
             foreach ($resultSet->getResults() as $item) {
-                /** @var \Elastica\Result $item */
                 $transfer->addPeriods((new RestConditionalAvailabilityPeriodItemTransfer())->fromArray($item->getData(), true));
             }
         }
 
-        /*
-        $sortTransfer = (new RestConditionalAvailabilitySortAttributesTransfer())
-            ->fromArray($transfer[static::SORT_NAME]->toArray());
-        */
-
-        //$transfer->setSort($sortTransfer);
+        $transfer->setTotal(\count($transfer->getPeriods()));
 
         return $transfer;
     }

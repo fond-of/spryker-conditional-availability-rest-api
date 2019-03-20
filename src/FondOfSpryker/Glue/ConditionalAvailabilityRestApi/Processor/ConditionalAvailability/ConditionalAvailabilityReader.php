@@ -1,25 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\ConditionalAvailability;
 
-use DateTime;
 use FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientInterface;
 use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\ConditionalAvailabilityRestApiConfig;
 use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapperInterface;
+use FondOfSpryker\Shared\ConditionalAvailability\ConditionalAvailabilityConstants;
 use Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer;
 use Generated\Shared\Transfer\RestConditionalAvailabilityRequestTransfer;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
-use Spryker\Glue\GlueApplication\Rest\Request\Data\Page;
 use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
 
 class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInterface
 {
-    /**
-     * @uses \Spryker\Client\Catalog\Plugin\Config\CatalogSearchConfigBuilder::DEFAULT_ITEMS_PER_PAGE;
-     */
-    protected const DEFAULT_ITEMS_PER_PAGE = 100;
-
     /**
      * @var \FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientInterface
      */
@@ -55,54 +51,50 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
      * @param \Generated\Shared\Transfer\RestConditionalAvailabilityRequestTransfer $restConditionalAvailabilityRequestTransfer
      *
      * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
+     * @throws \Exception
      */
     public function searchRequest(
         RestRequestInterface $restRequest,
         RestConditionalAvailabilityRequestTransfer $restConditionalAvailabilityRequestTransfer
     ): RestResponseInterface {
-
-        // search
-        // crap switch - only testing!
-        if (!empty($restConditionalAvailabilityRequestTransfer->getWarehouse())) {
-            $result = $this->conditionalAvailabilityClient->conditionalAvailabilitySearchWarehouse(
-                $restConditionalAvailabilityRequestTransfer->getWarehouse()
-            );
-        } else {
-            $result = $this->conditionalAvailabilityClient->conditionalAvailabilitySearch(
-                $restConditionalAvailabilityRequestTransfer->getSku(),
-                new DateTime($restConditionalAvailabilityRequestTransfer->getDate())
-            );
+        $searchParameters = [];
+        if ($restConditionalAvailabilityRequestTransfer->getWarehouse() !== null) {
+            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_WAREHOUSE] = $restConditionalAvailabilityRequestTransfer->getWarehouse();
         }
+
+        if ($restConditionalAvailabilityRequestTransfer->getDate() !== null) {
+            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_DATE] = new \DateTimeImmutable($restConditionalAvailabilityRequestTransfer->getDate());
+        }
+
+        $result = $this->conditionalAvailabilityClient->conditionalAvailabilitySkuSearch(
+            $restConditionalAvailabilityRequestTransfer->getSku(),
+            $searchParameters
+        );
 
         $responseTransfer = $this
             ->conditionalAvailabilityResourceMapper
             ->mapConditionalAvailabilityResultToResponseTransfer($result);
 
-        return $this->buildConditionalAvailabilityResponse($restRequest, $responseTransfer);
+        return $this->buildConditionalAvailabilityResponse($responseTransfer);
     }
 
     /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
      * @param \Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer $conditionalAvailabilityRequestTransfer
      *
      * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
      */
-    protected function buildConditionalAvailabilityResponse(
-        RestRequestInterface $restRequest,
-        RestConditionalAvailabilityPeriodResponseTransfer $conditionalAvailabilityRequestTransfer
-    ): RestResponseInterface {
+    protected function buildConditionalAvailabilityResponse(RestConditionalAvailabilityPeriodResponseTransfer $conditionalAvailabilityRequestTransfer): RestResponseInterface
+    {
         $restResource = $this->restResourceBuilder->createRestResource(
             ConditionalAvailabilityRestApiConfig::RESOURCE_CONDITIONAL_AVAILABILITY,
             null,
             $conditionalAvailabilityRequestTransfer
         );
 
-        //$response = $this->restResourceBuilder->createRestResponse($conditionalAvailabilityRequestTransfer->getPagination()->getNumFound());
-        $response = $this->restResourceBuilder->createRestResponse();
-        if (!$restRequest->getPage()) {
-            $restRequest->setPage(new Page(0, static::DEFAULT_ITEMS_PER_PAGE));
-        }
+        $response = $this->restResourceBuilder
+            ->createRestResponse()
+            ->addResource($restResource);
 
-        return $response->addResource($restResource);
+        return $response;
     }
 }
