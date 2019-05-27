@@ -10,6 +10,7 @@ use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\Condition
 use FondOfSpryker\Shared\ConditionalAvailability\ConditionalAvailabilityConstants;
 use Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer;
 use Generated\Shared\Transfer\RestConditionalAvailabilityRequestTransfer;
+use Spryker\Glue\CatalogSearchRestApi\CatalogSearchRestApiConfig;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
 use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
@@ -48,26 +49,25 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
 
     /**
      * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param \Generated\Shared\Transfer\RestConditionalAvailabilityRequestTransfer $restConditionalAvailabilityRequestTransfer
      *
      * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
      * @throws \Exception
      */
-    public function searchRequest(
-        RestRequestInterface $restRequest,
-        RestConditionalAvailabilityRequestTransfer $restConditionalAvailabilityRequestTransfer
-    ): RestResponseInterface {
+    public function searchRequest(RestRequestInterface $restRequest): RestResponseInterface
+    {
         $searchParameters = [];
-        if ($restConditionalAvailabilityRequestTransfer->getWarehouse() !== null) {
-            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_WAREHOUSE] = $restConditionalAvailabilityRequestTransfer->getWarehouse();
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::WAREHOUSE_PARAMETER)) {
+            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_WAREHOUSE]
+                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::WAREHOUSE_PARAMETER);
         }
 
-        if ($restConditionalAvailabilityRequestTransfer->getDate() !== null) {
-            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_DATE] = new \DateTimeImmutable($restConditionalAvailabilityRequestTransfer->getDate());
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::DATE_PARAMETER)) {
+            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_DATE]
+                = new \DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::DATE_PARAMETER));
         }
 
         $result = $this->conditionalAvailabilityClient->conditionalAvailabilitySkuSearch(
-            $restConditionalAvailabilityRequestTransfer->getSku(),
+            $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::SKU_PARAMETER),
             $searchParameters
         );
 
@@ -76,6 +76,30 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
             ->mapConditionalAvailabilityResultToResponseTransfer($result);
 
         return $this->buildConditionalAvailabilityResponse($responseTransfer);
+    }
+
+    /**
+     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
+     * @param string $parameterName
+     *
+     * @return bool*
+     */
+    protected function hasRequestParameter(RestRequestInterface $restRequest, string $parameterName): bool
+    {
+        $parameterValue = $this->getRequestParameter($restRequest, $parameterName);
+
+        return $parameterValue !== null && $parameterValue !== '';
+    }
+
+    /**
+     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
+     * @param string $parameterName
+     *
+     * @return string|null
+     */
+    protected function getRequestParameter(RestRequestInterface $restRequest, string $parameterName): ?string
+    {
+        return $restRequest->getHttpRequest()->query->get($parameterName);
     }
 
     /**
