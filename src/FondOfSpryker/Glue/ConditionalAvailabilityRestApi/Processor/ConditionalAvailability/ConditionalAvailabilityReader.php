@@ -1,16 +1,15 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\ConditionalAvailability;
 
+use DateTimeImmutable;
 use FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientInterface;
 use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\ConditionalAvailabilityRestApiConfig;
 use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapperInterface;
 use FondOfSpryker\Shared\ConditionalAvailability\ConditionalAvailabilityConstants;
 use Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer;
-use Generated\Shared\Transfer\RestConditionalAvailabilityRequestTransfer;
-use Spryker\Glue\CatalogSearchRestApi\CatalogSearchRestApiConfig;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
 use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
@@ -51,23 +50,27 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
      * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
      *
      * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     * @throws \Exception
      */
     public function searchRequest(RestRequestInterface $restRequest): RestResponseInterface
     {
         $searchParameters = [];
-        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::WAREHOUSE_PARAMETER)) {
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_WAREHOUSE)) {
             $searchParameters[ConditionalAvailabilityConstants::PARAMETER_WAREHOUSE]
-                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::WAREHOUSE_PARAMETER);
+                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_WAREHOUSE);
         }
 
-        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::DATE_PARAMETER)) {
-            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_DATE]
-                = new \DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::DATE_PARAMETER));
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_START_AT)) {
+            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_START_AT]
+                = new DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_START_AT));
+        }
+
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_END_AT)) {
+            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_END_AT]
+                = new DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_END_AT));
         }
 
         $result = $this->conditionalAvailabilityClient->conditionalAvailabilitySkuSearch(
-            $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::SKU_PARAMETER),
+            $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_SKU),
             $searchParameters
         );
 
