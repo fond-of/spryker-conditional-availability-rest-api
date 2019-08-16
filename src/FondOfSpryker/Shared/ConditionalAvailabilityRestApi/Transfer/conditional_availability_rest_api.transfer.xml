@@ -3,15 +3,9 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
 
-    <transfer name="RestConditionalAvailabilityRequest">
-        <property name="sku" type="string" />
-        <property name="date" type="string" />
-        <property name="warehouse" type="string" />
-    </transfer>
-
     <transfer name="RestConditionalAvailabilityPeriodResponse">
         <property name="periods" type="RestConditionalAvailabilityPeriodItem[]"/>
-        <property name="total" type="int"/>
+        <property name="pagination" type="RestConditionalAvailabilityPagination"/>
     </transfer>
 
     <transfer name="RestConditionalAvailabilityPeriodItem">
@@ -22,19 +16,10 @@
         <property name="warehouseGroup" type="string" />
     </transfer>
 
-    <transfer name="RestConditionalAvailabilitySortAttributes">
-        <property name="sortParamNames" type="array"/>
-        <property name="sortParamLocalizedNames" type="array"/>
-        <property name="currentSortParam" type="string"/>
-        <property name="currentSortOrder" type="string"/>
-    </transfer>
-
-    <transfer name="RestConditionalAvailabilityPaginationAttributes">
+    <transfer name="RestConditionalAvailabilityPagination">
         <property name="numFound" type="int" />
         <property name="currentPage" type="int" />
         <property name="maxPage" type="int" />
         <property name="currentItemsPerPage" type="int" />
     </transfer>
-
-
 </transfers>

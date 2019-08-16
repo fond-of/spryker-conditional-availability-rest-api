@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper;
 
-use Elastica\ResultSet;
 use Generated\Shared\Transfer\RestConditionalAvailabilityPeriodItemTransfer;
 use Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer;
 
@@ -15,22 +14,29 @@ class ConditionalAvailabilityResourceMapper implements ConditionalAvailabilityRe
      */
     protected const SORT_NAME = 'sort';
 
+    protected const SEARCH_KEY = 'period';
+
     /**
-     * @param \Elastica\ResultSet $resultSet
+     * @param array $result
      *
      * @return \Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer
      */
-    public function mapConditionalAvailabilityResultToResponseTransfer(ResultSet $resultSet): RestConditionalAvailabilityPeriodResponseTransfer
-    {
+    public function mapConditionalAvailabilityResultToResponseTransfer(
+        array $result
+    ): RestConditionalAvailabilityPeriodResponseTransfer {
         $transfer = new RestConditionalAvailabilityPeriodResponseTransfer();
+        $transfer->fromArray($result, true);
 
-        if ($resultSet->count() > 0) {
-            foreach ($resultSet->getResults() as $item) {
-                $transfer->addPeriods((new RestConditionalAvailabilityPeriodItemTransfer())->fromArray($item->getData(), true));
-            }
+        if (!array_key_exists(static::SEARCH_KEY, $result)) {
+            return $transfer;
         }
 
-        $transfer->setTotal(\count($transfer->getPeriods()));
+        foreach ($result[static::SEARCH_KEY] as $period) {
+            $restConditionalAvailabilityPeriodItemTransfer = (new RestConditionalAvailabilityPeriodItemTransfer())
+                ->fromArray($period, true);
+
+            $transfer->addPeriods($restConditionalAvailabilityPeriodItemTransfer);
+        }
 
         return $transfer;
     }

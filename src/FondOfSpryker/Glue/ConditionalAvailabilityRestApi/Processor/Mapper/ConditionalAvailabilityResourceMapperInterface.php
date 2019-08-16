@@ -1,18 +1,19 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper;
 
-use Elastica\ResultSet;
 use Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer;
 
 interface ConditionalAvailabilityResourceMapperInterface
 {
     /**
-     * @param \Elastica\ResultSet $resultSet
+     * @param array $result
      *
      * @return \Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer
      */
-    public function mapConditionalAvailabilityResultToResponseTransfer(ResultSet $resultSet): RestConditionalAvailabilityPeriodResponseTransfer;
+    public function mapConditionalAvailabilityResultToResponseTransfer(
+        array $result
+    ): RestConditionalAvailabilityPeriodResponseTransfer;
 }
