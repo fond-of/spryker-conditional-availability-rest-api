@@ -13,4 +13,7 @@ class ConditionalAvailabilityRestApiConfig extends AbstractBundleConfig
     public const QUERY_SKU = 'sku';
     public const QUERY_START_AT = 'start_at';
     public const QUERY_END_AT = 'end_at';
+
+    public const PAGINATION_PARAMETER_NAME_PAGE = 'page';
+    public const PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME = 'ipp';
 }

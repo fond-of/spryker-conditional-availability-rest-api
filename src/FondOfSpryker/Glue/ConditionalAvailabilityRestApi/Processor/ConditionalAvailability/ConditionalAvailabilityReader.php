@@ -69,6 +69,16 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
                 = new DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_END_AT));
         }
 
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE)) {
+            $searchParameters[ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE]
+                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE);
+        }
+
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME)) {
+            $searchParameters[ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME]
+                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME);
+        }
+
         $result = $this->conditionalAvailabilityClient->conditionalAvailabilitySkuSearch(
             $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_SKU),
             $searchParameters
