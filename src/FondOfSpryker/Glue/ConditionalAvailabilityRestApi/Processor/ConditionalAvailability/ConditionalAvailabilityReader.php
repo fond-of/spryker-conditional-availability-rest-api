@@ -49,6 +49,8 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
     /**
      * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
      *
+     * @throws
+     *
      * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
      */
     public function searchRequest(RestRequestInterface $restRequest): RestResponseInterface
@@ -95,7 +97,7 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
      * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
      * @param string $parameterName
      *
-     * @return bool*
+     * @return bool
      */
     protected function hasRequestParameter(RestRequestInterface $restRequest, string $parameterName): bool
     {
