@@ -9,6 +9,7 @@ use FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientIn
 use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\ConditionalAvailabilityRestApiConfig;
 use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapperInterface;
 use FondOfSpryker\Shared\ConditionalAvailability\ConditionalAvailabilityConstants;
+use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\RestConditionalAvailabilityPeriodResponseTransfer;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
@@ -55,35 +56,10 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
      */
     public function searchRequest(RestRequestInterface $restRequest): RestResponseInterface
     {
-        $searchParameters = [];
-        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_WAREHOUSE)) {
-            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_WAREHOUSE]
-                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_WAREHOUSE);
-        }
-
-        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_START_AT)) {
-            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_START_AT]
-                = new DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_START_AT));
-        }
-
-        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_END_AT)) {
-            $searchParameters[ConditionalAvailabilityConstants::PARAMETER_END_AT]
-                = new DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_END_AT));
-        }
-
-        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE)) {
-            $searchParameters[ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE]
-                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE);
-        }
-
-        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME)) {
-            $searchParameters[ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME]
-                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME);
-        }
 
         $result = $this->conditionalAvailabilityClient->conditionalAvailabilitySkuSearch(
-            $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_SKU),
-            $searchParameters
+            $this->getSearchString($restRequest),
+            $this->getRequestParameters($restRequest)
         );
 
         $responseTransfer = $this
@@ -108,6 +84,16 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
 
     /**
      * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
+     *
+     * @return string|null
+     */
+    protected function getSearchString(RestRequestInterface $restRequest): ?string
+    {
+        return $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_SKU);
+    }
+
+    /**
+     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
      * @param string $parameterName
      *
      * @return string|null
@@ -115,6 +101,49 @@ class ConditionalAvailabilityReader implements ConditionalAvailabilityReaderInte
     protected function getRequestParameter(RestRequestInterface $restRequest, string $parameterName): ?string
     {
         return $restRequest->getHttpRequest()->query->get($parameterName);
+    }
+
+    /**
+     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
+     *
+     * @throws
+     *
+     * @return array
+     */
+    protected function getRequestParameters(RestRequestInterface $restRequest): array
+    {
+        $requestParameters = [];
+
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_WAREHOUSE)) {
+            $requestParameters[ConditionalAvailabilityConstants::PARAMETER_WAREHOUSE]
+                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_WAREHOUSE);
+        }
+
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_START_AT)) {
+            $requestParameters[ConditionalAvailabilityConstants::PARAMETER_START_AT]
+                = new DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_START_AT));
+        }
+
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_END_AT)) {
+            $requestParameters[ConditionalAvailabilityConstants::PARAMETER_END_AT]
+                = new DateTimeImmutable($this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::QUERY_END_AT));
+        }
+
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE)) {
+            $requestParameters[ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE]
+                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_PARAMETER_NAME_PAGE);
+        }
+
+        if ($this->hasRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME)) {
+            $requestParameters[ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME]
+                = $this->getRequestParameter($restRequest, ConditionalAvailabilityRestApiConfig::PAGINATION_ITEMS_PER_PAGE_PARAMETER_NAME);
+        }
+
+        $requestParameters[ConditionalAvailabilityConstants::PARAMETER_CUSTOMER_TRANSFER] = (new CustomerTransfer())
+            ->setCustomerReference($restRequest->getRestUser()->getNaturalIdentifier())
+            ->setIdCustomer($restRequest->getRestUser()->getSurrogateIdentifier());
+
+        return $requestParameters;
     }
 
     /**
