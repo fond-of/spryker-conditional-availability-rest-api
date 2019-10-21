@@ -5,6 +5,7 @@ namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Conditiona
 use Codeception\Test\Unit;
 use FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientInterface;
 use FondOfSpryker\Glue\ConditionalAvailabilityRestApi\Processor\Mapper\ConditionalAvailabilityResourceMapperInterface;
+use Generated\Shared\Transfer\RestUserTransfer;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
@@ -60,6 +61,11 @@ class ConditionalAvailabilityReaderTest extends Unit
     protected $restResponseInterfaceMock;
 
     /**
+     * @var \Generated\Shared\Transfer\RestUserTransfer|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $restUserTransferMock;
+
+    /**
      * @return void
      */
     protected function _before(): void
@@ -98,6 +104,10 @@ class ConditionalAvailabilityReaderTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->restUserTransferMock = $this->getMockBuilder(RestUserTransfer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->conditionalAvailabilityReader = new ConditionalAvailabilityReader(
             $this->conditionalAvailabilityClientInterfaceMock,
             $this->conditionalAvailabilityResourceMapperInterfaceMock,
@@ -115,6 +125,18 @@ class ConditionalAvailabilityReaderTest extends Unit
         $this->restRequestInterfaceMock->expects($this->atLeast(11))
             ->method('getHttpRequest')
             ->willReturn($this->requestMock);
+
+        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
+            ->method('getRestUser')
+            ->willReturn($this->restUserTransferMock);
+
+        $this->restUserTransferMock->expects($this->atLeastOnce())
+            ->method('getNaturalIdentifier')
+            ->willReturn('DE--1');
+
+        $this->restUserTransferMock->expects($this->atLeastOnce())
+            ->method('getSurrogateIdentifier')
+            ->willReturn(1);
 
         $this->parameterBagMock->expects($this->atLeast(11))
             ->method('get')
@@ -136,6 +158,9 @@ class ConditionalAvailabilityReaderTest extends Unit
             ->method('addResource')
             ->willReturn($this->restResponseInterfaceMock);
 
-        $this->assertInstanceOf(RestResponseInterface::class, $this->conditionalAvailabilityReader->searchRequest($this->restRequestInterfaceMock));
+        $this->assertInstanceOf(
+            RestResponseInterface::class,
+            $this->conditionalAvailabilityReader->searchRequest($this->restRequestInterfaceMock)
+        );
     }
 }
