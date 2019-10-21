@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace FondOfSpryker\Glue\ConditionalAvailabilityRestApi;
 
@@ -34,6 +34,8 @@ class ConditionalAvailabilityRestApiFactory extends AbstractFactory
     }
 
     /**
+     * @throws
+     *
      * @return \FondOfSpryker\Client\ConditionalAvailability\ConditionalAvailabilityClientInterface
      */
     public function getConditionalAvailabilityClient(): ConditionalAvailabilityClientInterface
